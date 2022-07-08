@@ -1,29 +1,101 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import AppLoading from 'expo-app-loading';
-import { useFonts } from 'expo-font';
-import { Homepage } from './src/screens';
-export default function App() {
-  // aqui vamos a cargar la letra
-  const [loaded] = useFonts({ 
-    Montserrat: require('./assets/fonts/Montserrat-Regular.ttf'),
-   });
-   if (!loaded) { 
-    // tenemos que escribir que e esta cargando la app(la letra)
-    return <AppLoading/>
-  }else{
-    return (
-     <Homepage/>
-    );
-  }
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Keyboard,
+  ScrollView,
+} from "react-native";
+import Task from "./src/components/Task";
 
+export default function App() {
+  const [task, setTask] = useState();
+  const [taskItems, setTaskItems] = useState([]);
+
+  // esta funcion se encarga de agregar la nueva tarea
+  const handleAddTask = () => {
+    Keyboard.dismiss();
+    // agrega todo lo demás y al ultimo la nueva tarea
+    setTaskItems([...taskItems, task]);
+    setTask(null);
+  };
+  // esta funcion te sirve para borrar la tarea completada
+  const completeTask = (index) => {
+    let itemsCopy = [...taskItems];
+    itemsCopy.splice(index, 1);
+    setTaskItems(itemsCopy);
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* el ScrollView va a permitir que se vean más tareas aun cuando ya no quepan en la pantalla */}
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Aqui van a parecer las tareas */}
+        <View style={styles.tasksWrapper}>
+          <Text style={styles.sectionTitle}>Today's tasks</Text>
+          <View style={styles.items}>
+            {/* Aqui es donde se van a listar! */}
+            <Task text={"Tarea 1"}></Task>
+            <Task text={"Tarea 2"}></Task>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Write a task */}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#E8EAED",
   },
+  tasksWrapper: {
+    paddingTop: 80,
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  items: {
+    marginTop: 30,
+  },
+  writeTaskWrapper: {
+    position: "absolute",
+    bottom: 60,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  input: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    backgroundColor: "#FFF",
+    borderRadius: 60,
+    borderColor: "#C0C0C0",
+    borderWidth: 1,
+    width: 250,
+  },
+  addWrapper: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#FFF",
+    borderRadius: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#C0C0C0",
+    borderWidth: 1,
+  },
+  addText: {},
 });
